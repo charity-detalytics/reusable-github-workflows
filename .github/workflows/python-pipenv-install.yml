@@ -108,6 +108,7 @@ jobs:
         uses: jaumann/github-bumpversion-action@v0.0.7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: minor
       - name: Release on main branch
         if: endsWith(github.ref, '/main') && inputs.pypi_release
         uses: wangsha/action-s3pypi@main
