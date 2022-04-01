@@ -42,7 +42,7 @@ jobs:
         run: pip3 install pipenv
       - name: install package
         run: |
-          rm Pipfile.lock
+          rm -f Pipfile.lock
           pipenv update --dev
         env:
           REGISTRY_AUTH: ${{ secrets.pipy_registry_auth }}
