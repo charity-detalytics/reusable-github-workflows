@@ -1,0 +1,64 @@
+name: Reusable python workflow
+
+on:
+  workflow_call:
+    inputs:
+      python_version:
+        default: '3.9'
+        required: true
+        type: string
+    secrets:
+      pipy_registry_auth:
+        required: false
+
+jobs:
+  example_job:
+    name: Pass input and secrets to my-action
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      - uses: wangsha/action-pipenv-setup@main
+      - name: linting
+        uses: psf/black@stable
+        with:
+          options: "--check --verbose"
+      - name: detect-secrets
+        uses: reviewdog/action-detect-secrets@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review # Change reporter.
+      - name: misspell
+        uses: reviewdog/action-misspell@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          locale: "US/UK"
+      - uses: reviewdog/action-alex@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Change reviewdog reporter if you need [github-pr-check,github-check,github-pr-review].
+          reporter: github-pr-review
+          # Change reporter level if you need.
+          # GitHub Status Check won't become failure with warning.
+          level: warning
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ inputs.python_version }}
+      - name: install pipenv
+        run: pip3 install pipenv
+      - name: Cache pipenv packages
+        id: cache-pipenv
+        uses: actions/cache@v2
+        with:
+          path: ~/.local/share/virtualenvs
+          key: ${{ env.pythonLocation }}-${{ runner.os }}-build-${{ hashFiles('**/Pipfile.lock') }}
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: |
+          echo Hello, world!
+          echo github ref: ${{ github.ref }}
+          echo pipenv-cache hit: ${{ steps.cache-pipenv.outputs.cache-hit }}
+      - name: install package
+        run: pipenv install --dev
+        env:
+          REGISTRY_AUTH: ${{ secrets.pipy_registry_auth }}
