@@ -7,12 +7,15 @@ on:
         default: '3.9'
         required: true
         type: string
+      test_script:
+        required: false
+        type: string
     secrets:
       pipy_registry_auth:
         required: false
 
 jobs:
-  example_job:
+  pipenv_setup_test_job:
     name: Pass input and secrets to my-action
     runs-on: ubuntu-latest
     steps:
@@ -62,3 +65,6 @@ jobs:
         run: pipenv install --dev
         env:
           REGISTRY_AUTH: ${{ secrets.pipy_registry_auth }}
+      - name: run test
+        run: ${{ inputs.test_script }}
+
