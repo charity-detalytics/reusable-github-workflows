@@ -10,6 +10,9 @@ on:
       test_script:
         required: false
         type: string
+      deploy_script:
+        required: false
+        type: string
       setup_mongo:
         default: false
         required: false
@@ -18,9 +21,25 @@ on:
         default: false
         required: false
         type: boolean
+      pypi_release:
+        default: false
+        required: false
+        type: boolean
+      aws_region:
+        required: false
+        default: "ap-southeast-1"
+        type: string
     secrets:
       pipy_registry_auth:
         required: false
+      slack_webhook_url:
+        description: "notify slack on github action result"
+        required: false
+      aws_key_id:
+        required: false
+      aws_secret:
+        required: false
+
 
 jobs:
   pipenv_setup_test_job:
@@ -70,7 +89,7 @@ jobs:
           echo github ref: ${{ github.ref }}
           echo pipenv-cache hit: ${{ steps.cache-pipenv.outputs.cache-hit }}
       - name: install package
-        run: pipenv install --dev
+        run: pipenv install --dev --keep-outdated
         env:
           REGISTRY_AUTH: ${{ secrets.pipy_registry_auth }}
       - uses: supercharge/redis-github-action@1.4.0
@@ -79,5 +98,36 @@ jobs:
         uses: supercharge/mongodb-github-action@1.7.0
         if: inputs.setup_mongo
       - name: run test
+        if: inputs.test_script
         run: ${{ inputs.test_script }}
+      - name: deploy
+        if: inputs.deploy_script
+        run: ${{ inputs.deploy_script }}
+      - name: bumpversion
+        if: endsWith(github.ref, '/main')
+        uses: jaumann/github-bumpversion-action@v0.0.7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release on main branch
+        if: endsWith(github.ref, '/main') && inputs.pypi_release
+        uses: wangsha/action-s3pypi@main
+        with:
+          args: "--bucket pipy.detalytics.com -v"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.aws_key_id }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret }}
+          AWS_DEFAULT_REGION: ${{ inputs.aws_region }}
+      - name: Add Changelog
+        if: endsWith(github.ref, '/main')
+        uses: charity-detalytics/changelog-ci@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: notify slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow # selectable (default: repo,message)
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook_url }} # required
+        if: always()
 
