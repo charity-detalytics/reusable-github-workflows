@@ -16,8 +16,7 @@ on:
       slack_webhook_url:
         description: "notify slack on github action result"
         required: false
-        type: string
-        
+
 jobs:
   # This workflow contains a single job called "build"
   build:
@@ -56,4 +55,3 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook_url }} # required
         if: ${{ secrets.slack_webhook_url }}
-
