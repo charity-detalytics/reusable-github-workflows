@@ -114,7 +114,7 @@ jobs:
         if: endsWith(github.ref, '/main') && inputs.pypi_release
         uses: wangsha/action-s3pypi@main
         with:
-          args: "--bucket pipy.detalytics.com -v"
+          args: "--bucket pipy.detalytics.com --unsafe-s3-website --put-root-index -v"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.aws_key_id }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret }}
