@@ -60,10 +60,10 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review # Change reporter.
       - name: misspell
-        uses: reviewdog/action-misspell@v1
+        uses: reviewdog/action-misspell@v1.10.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          locale: "US/UK"
+          locale: "UK"
       - uses: reviewdog/action-alex@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
