@@ -59,8 +59,9 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review # Change reporter.
+          fail_on_error: true
       - name: misspell
-        uses: reviewdog/action-misspell@v1.10.1
+        uses: reviewdog/action-misspell@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           locale: "UK"
