@@ -29,6 +29,10 @@ on:
         required: false
         default: "ap-southeast-1"
         type: string
+      pipenv_setup_check:
+        required: false
+        default: true
+        type: boolean
     secrets:
       pipy_registry_auth:
         required: false
@@ -54,6 +58,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
       - uses: wangsha/action-pipenv-setup@main
+          if: inputs.pipenv_setup_check
       - name: linting
         uses: psf/black@stable
         with:
