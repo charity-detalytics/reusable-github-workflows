@@ -32,6 +32,8 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      env_base64: ${{ secrets.env_base64 }}
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -61,9 +63,9 @@ jobs:
         uses: supercharge/mongodb-github-action@1.7.0
         if: inputs.setup_mongo
       - name: Setup ENV
-        if: secrets.env_base64
+        if: ${{ env.env_base64 != '' }}
         run: |
-          echo ${{ secrets.env_base64 }} | base64 -d > .env
+          echo ${{ env.env_base64 }} | base64 -d > .env
       - name: Run test
         run: ${{ inputs.test_script }}
       - name: notify slack

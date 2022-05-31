@@ -48,6 +48,8 @@ jobs:
     name: Pass input and secrets to my-action
     runs-on: ubuntu-latest
     timeout-minutes: 40
+    env:
+      env_base64: ${{ secrets.env_base64 }}
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
@@ -102,9 +104,9 @@ jobs:
         uses: supercharge/mongodb-github-action@1.7.0
         if: inputs.setup_mongo
       - name: Setup ENV
-        if: secrets.env_base64
+        if: ${{ env.env_base64 != '' }}
         run: |
-          echo ${{ secrets.env_base64 }} | base64 -d > .env
+          echo ${{ env.env_base64 }} | base64 -d > .env
       - name: run test
         if: inputs.test_script
         run: ${{ inputs.test_script }}
