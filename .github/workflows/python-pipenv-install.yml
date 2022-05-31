@@ -39,6 +39,8 @@ on:
         required: false
       aws_secret:
         required: false
+      env_base64:
+        required: false
 
 
 jobs:
@@ -99,6 +101,10 @@ jobs:
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.7.0
         if: inputs.setup_mongo
+      - name: Setup ENV
+        if: secrets.env_base64
+        run: |
+          echo ${{ secrets.env_base64 }} | base64 -d > .env
       - name: run test
         if: inputs.test_script
         run: ${{ inputs.test_script }}

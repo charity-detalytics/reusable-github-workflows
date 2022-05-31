@@ -24,7 +24,8 @@ on:
       slack_webhook_url:
         description: "notify slack on github action result"
         required: false
-
+      env_base64:
+        required: false
 jobs:
   # This workflow contains a single job called "build"
   package-update:
@@ -59,6 +60,10 @@ jobs:
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.7.0
         if: inputs.setup_mongo
+      - name: Setup ENV
+        if: secrets.env_base64
+        run: |
+          echo ${{ secrets.env_base64 }} | base64 -d > .env
       - name: Run test
         run: ${{ inputs.test_script }}
       - name: notify slack
