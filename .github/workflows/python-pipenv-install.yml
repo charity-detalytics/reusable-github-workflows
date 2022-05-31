@@ -58,7 +58,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
       - uses: wangsha/action-pipenv-setup@main
-          if: inputs.pipenv_setup_check
+        if: inputs.pipenv_setup_check
       - name: linting
         uses: psf/black@stable
         with:
