@@ -113,6 +113,10 @@ jobs:
       - name: deploy
         if: inputs.deploy_script
         run: ${{ inputs.deploy_script }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.aws_key_id }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret }}
+          AWS_DEFAULT_REGION: ${{ inputs.aws_region }}
       - name: bumpversion
         if: endsWith(github.ref, '/main')
         uses: jaumann/github-bumpversion-action@v0.0.7
