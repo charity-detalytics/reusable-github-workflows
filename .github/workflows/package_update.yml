@@ -24,17 +24,24 @@ on:
       slack_webhook_url:
         description: "notify slack on github action result"
         required: false
-
+      env_base64:
+        required: false
 jobs:
   # This workflow contains a single job called "build"
   package-update:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      env_base64: ${{ secrets.env_base64 }}
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+      - name: Setup ENV
+        if: ${{ env.env_base64 != '' }}
+        run: |
+          echo ${{ env.env_base64 }} | base64 -d > .env
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ inputs.python_version }}
