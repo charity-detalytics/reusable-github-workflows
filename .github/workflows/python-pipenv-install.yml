@@ -103,7 +103,7 @@ jobs:
         if: inputs.test_script
         run: ${{ inputs.test_script }}
       - name: deploy
-        if: inputs.deploy_script
+        if: endsWith(github.ref, '/main') && inputs.deploy_script
         run: ${{ inputs.deploy_script }}
       - name: bumpversion
         if: endsWith(github.ref, '/main')
