@@ -1,0 +1,70 @@
+name: 'Deploy'
+
+on:
+  workflow_call:
+    inputs:
+      python_version:
+        default: '3.9'
+        required: false
+        type: string
+      deploy_script:
+        required: false
+        type: string
+      aws_region:
+        required: false
+        default: "ap-southeast-1"
+        type: string
+    secrets:
+      slack_webhook_url:
+        description: "notify slack on github action result"
+        required: false
+      aws_key_id:
+        required: false
+      aws_secret:
+        required: false
+
+jobs:
+  deploy:
+    name: Pass input and secrets to my-action
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ inputs.python_version }}
+      - name: install pipenv
+        run: pip3 install pipenv
+      - name: Cache pipenv packages
+        id: cache-pipenv
+        uses: actions/cache@v2
+        with:
+          path: ~/.local/share/virtualenvs
+          key: ${{ env.pythonLocation }}-${{ runner.os }}-build-${{ hashFiles('**/Pipfile.lock') }}
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: |
+          echo Hello, world!
+          echo github ref: ${{ github.ref }}
+          echo pipenv-cache hit: ${{ steps.cache-pipenv.outputs.cache-hit }}
+      - name: install package
+        run: pipenv install --dev --keep-outdated
+        env:
+          REGISTRY_AUTH: ${{ secrets.pipy_registry_auth }}
+      - name: deploy
+        if: endsWith(github.ref, '/main') && inputs.deploy_script
+        run: ${{ inputs.deploy_script }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.aws_key_id }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret }}
+          AWS_DEFAULT_REGION: ${{ inputs.aws_region }}
+      - name: notify slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow # selectable (default: repo,message)
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook_url }} # required
+        if: always()
+
