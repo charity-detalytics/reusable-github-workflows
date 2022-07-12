@@ -41,7 +41,7 @@ jobs:
       - name: Setup ENV
         if: ${{ env.env_base64 != '' }}
         run: echo ${{ env.env_base64 }} | base64 -d > .env
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
           python-version: ${{ inputs.python_version }}
       - name: install pipenv
