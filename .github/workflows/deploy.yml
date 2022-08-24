@@ -55,7 +55,7 @@ jobs:
           echo github ref: ${{ github.ref }}
           echo pipenv-cache hit: ${{ steps.cache-pipenv.outputs.cache-hit }}
       - name: install package
-        run: pipenv install --keep-outdated
+        run: pipenv sync
         env:
           REGISTRY_AUTH: ${{ secrets.pipy_registry_auth }}
       - name: deploy
