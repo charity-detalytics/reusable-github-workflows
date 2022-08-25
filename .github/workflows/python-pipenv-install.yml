@@ -103,7 +103,7 @@ jobs:
           echo github ref: ${{ github.ref }}
           echo pipenv-cache hit: ${{ steps.cache-pipenv.outputs.cache-hit }}
       - name: install package
-        run: pipenv sync
+        run: pipenv sync --dev
         env:
           REGISTRY_AUTH: ${{ secrets.pipy_registry_auth }}
       - uses: supercharge/redis-github-action@1.4.0
