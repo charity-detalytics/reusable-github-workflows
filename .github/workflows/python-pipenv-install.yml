@@ -48,10 +48,10 @@ on:
 
 
 jobs:
-  pipenv_setup_test_job:
+  build:
     name: Pass input and secrets to my-action
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 20
     env:
       env_base64: ${{ secrets.env_base64 }}
     steps:
@@ -73,10 +73,10 @@ jobs:
           reporter: github-pr-review # Change reporter.
           fail_on_error: true
       - name: misspell
-        uses: reviewdog/action-misspell@master
+        uses: reviewdog/action-misspell@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          locale: "UK"
+          locale: "US/UK"
       - uses: reviewdog/action-alex@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -92,7 +92,7 @@ jobs:
         run: pip3 install pipenv
       - name: Cache pipenv packages
         id: cache-pipenv
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.local/share/virtualenvs
           key: ${{ env.pythonLocation }}-${{ runner.os }}-build-${{ hashFiles('**/Pipfile.lock') }}
@@ -106,6 +106,26 @@ jobs:
         run: pipenv sync --dev
         env:
           REGISTRY_AUTH: ${{ secrets.pipy_registry_auth }}
+        if: ${{ steps.cache-pipenv.outputs.cache-hit }} == false
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: install pipenv
+        run: pip3 install pipenv
+      - name: Cache pipenv packages
+        id: cache-pipenv
+        uses: actions/cache@v3
+        with:
+          path: ~/.local/share/virtualenvs
+          key: ${{ env.pythonLocation }}-${{ runner.os }}-build-${{ hashFiles('**/Pipfile.lock') }}
       - uses: supercharge/redis-github-action@1.4.0
         if: inputs.setup_redis
       - name: Start MongoDB

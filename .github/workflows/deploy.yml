@@ -44,7 +44,7 @@ jobs:
         run: pip3 install pipenv
       - name: Cache pipenv packages
         id: cache-pipenv
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.local/share/virtualenvs
           key: ${{ env.pythonLocation }}-${{ runner.os }}-build-${{ hashFiles('**/Pipfile.lock') }}
@@ -58,6 +58,7 @@ jobs:
         run: pipenv sync
         env:
           REGISTRY_AUTH: ${{ secrets.pipy_registry_auth }}
+        if: ${{ steps.cache-pipenv.outputs.cache-hit }} == false
       - name: deploy
         if: endsWith(github.ref, '/main') && inputs.deploy_script
         run: ${{ inputs.deploy_script }}
