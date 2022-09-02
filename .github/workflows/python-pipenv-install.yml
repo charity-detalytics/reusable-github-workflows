@@ -57,9 +57,6 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-      - name: Setup ENV
-        if: ${{ env.env_base64 != '' }}
-        run: echo ${{ env.env_base64 }} | base64 -d > .env
       - uses: wangsha/action-pipenv-setup@main
         if: inputs.pipenv_setup_check
       - name: linting
@@ -111,6 +108,8 @@ jobs:
   test:
     needs: build
     runs-on: ubuntu-latest
+    env:
+      env_base64: ${{ secrets.env_base64 }}
     steps:
       - uses: actions/checkout@v3
         with:
