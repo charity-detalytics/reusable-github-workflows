@@ -44,14 +44,6 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ inputs.python_version }}
-      - name: install pipenv
-        run: pip3 install pipenv
-      - name: install package
-        run: |
-          rm -f Pipfile.lock
-          pipenv update --dev
-        env:
-          REGISTRY_AUTH: ${{ secrets.pipy_registry_auth }}
       - name: Pull pre-commit config
         run: |
           curl -O https://raw.githubusercontent.com/wangsha/reusable-github-workflows/main/.pre-commit-config.yaml
@@ -64,8 +56,16 @@ jobs:
         run: |
           pre-commit run --show-diff-on-failure --color=always --all-files >/dev/null 2>&1
           pre-commit run --show-diff-on-failure --color=always --all-files >/dev/null 2>&1
-          pre-commit run --show-diff-on-failure --color=always --all-files>/dev/null 2>&1
+          pre-commit run --show-diff-on-failure --color=always --all-files >/dev/null 2>&1
         shell: bash
+      - name: install pipenv
+        run: pip3 install pipenv
+      - name: install package
+        run: |
+          rm -f Pipfile.lock
+          pipenv update --dev
+        env:
+          REGISTRY_AUTH: ${{ secrets.pipy_registry_auth }}
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
