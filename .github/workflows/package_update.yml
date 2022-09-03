@@ -26,6 +26,8 @@ on:
         required: false
       env_base64:
         required: false
+      github_token:
+        required: true
 jobs:
   # This workflow contains a single job called "build"
   package-update:
@@ -38,6 +40,8 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secret.github_token }}
       - name: Setup ENV
         if: ${{ env.env_base64 != '' }}
         run: echo ${{ env.env_base64 }} | base64 -d > .env
