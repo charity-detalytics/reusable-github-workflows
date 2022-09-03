@@ -57,6 +57,7 @@ jobs:
           curl -O https://raw.githubusercontent.com/wangsha/reusable-github-workflows/main/.pre-commit-config.yaml
           curl -O https://raw.githubusercontent.com/wangsha/reusable-github-workflows/main/pyproject.toml
       - uses: pre-commit/action@v3.0.0
+        continue-on-error: true
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
