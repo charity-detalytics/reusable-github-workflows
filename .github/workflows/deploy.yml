@@ -74,4 +74,3 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook_url }} # required
         if: always()
-
