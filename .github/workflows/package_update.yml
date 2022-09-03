@@ -74,6 +74,7 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           base: main
+          token: ${{ secrets.checkout_token }}
       - uses: supercharge/redis-github-action@1.4.0
         if: inputs.setup_redis
       - name: Start MongoDB
