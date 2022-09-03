@@ -1,8 +1,8 @@
-name: pre-commit
+name: update pre-commit
 
 on:
   schedule:
-    - cron: '0 1 0 * *'  #1st day of every month 0:00 am UTC time
+    - cron: '0 21 1 * *'  #21st day of every month 1:00 am UTC time
   pull_request:
   push:
     branches: [main]
