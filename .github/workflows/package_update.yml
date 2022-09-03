@@ -62,9 +62,9 @@ jobs:
         continue-on-error: true
       - name: ensure pre-commit no more error
         run: |
-          pre-commit run --show-diff-on-failure --color=always --all-files
-          pre-commit run --show-diff-on-failure --color=always --all-files
-          pre-commit run --show-diff-on-failure --color=always --all-files
+          pre-commit run --show-diff-on-failure --color=always --all-files >/dev/null 2>&1
+          pre-commit run --show-diff-on-failure --color=always --all-files >/dev/null 2>&1
+          pre-commit run --show-diff-on-failure --color=always --all-files>/dev/null 2>&1
         shell: bash
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
