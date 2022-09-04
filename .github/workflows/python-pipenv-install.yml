@@ -95,10 +95,10 @@ jobs:
           extra_args: --all-files
         continue-on-error: true
         if: github.ref != 'refs/heads/main'
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - uses: stefanzweifel/git-auto-commit-action@master
         with:
           commit_message: Automated Changes from pre-commit hooks
-          file_pattern: '!.github'
+          file_pattern: ':!.github/'
         if: github.ref != 'refs/heads/main'
       - name: install pipenv
         run: pip3 install pipenv

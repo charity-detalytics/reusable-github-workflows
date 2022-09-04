@@ -32,6 +32,21 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ inputs.python_version }}
+      - name: Pull pre-commit config
+        run: |
+          curl -O https://raw.githubusercontent.com/wangsha/reusable-github-workflows/main/.pre-commit-config.yaml
+          curl -O https://raw.githubusercontent.com/wangsha/reusable-github-workflows/main/pyproject.toml
+        if: github.ref != 'refs/heads/main'
+      - uses: wangsha/pre-commit-github-action@main
+        with:
+          extra_args: --all-files
+        continue-on-error: true
+        if: github.ref != 'refs/heads/main'
+      - uses: stefanzweifel/git-auto-commit-action@master
+        with:
+          commit_message: Automated Changes from pre-commit hooks
+          file_pattern: ':!.github/'
+        if: github.ref != 'refs/heads/main'
       - name: install pipenv
         run: pip3 install pipenv
       - name: install package
