@@ -40,20 +40,6 @@ jobs:
           pipenv update --dev
         env:
           REGISTRY_AUTH: ${{ secrets.pipy_registry_auth }}
-      - name: Pull pre-commit config
-        run: |
-          curl -O https://raw.githubusercontent.com/wangsha/reusable-github-workflows/main/.pre-commit-config.yaml
-          curl -O https://raw.githubusercontent.com/wangsha/reusable-github-workflows/main/pyproject.toml
-      - uses: pre-commit/action@v3.0.0
-        with:
-          extra_args: --all-files
-        continue-on-error: true
-      - name: ensure pre-commit no more error
-        run: |
-          pre-commit run --all-files >/dev/null 2>&1 || exit 0
-          pre-commit run --all-files >/dev/null 2>&1 || exit 0
-          pre-commit run --all-files >/dev/null 2>&1 || exit 0
-        shell: bash
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
