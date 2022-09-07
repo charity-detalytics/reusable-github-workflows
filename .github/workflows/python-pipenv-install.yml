@@ -158,10 +158,6 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.aws_key_id }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret }}
           AWS_DEFAULT_REGION: ${{ inputs.aws_region }}
-      - uses: wangsha/pre-commit-github-action@main
-        with:
-          extra_args: --all-files
-        if: endsWith(github.ref, '/main')
       - name: bumpversion
         if: endsWith(github.ref, '/main')
         uses: jasonamyers/github-bumpversion-action@v1.0.5
