@@ -39,7 +39,6 @@ jobs:
       - uses: wangsha/pre-commit-github-action@main
         with:
           extra_args: --all-files
-        continue-on-error: true
       - name: install pipenv
         run: pip3 install pipenv
       - name: install package
