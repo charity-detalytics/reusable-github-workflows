@@ -158,6 +158,13 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.aws_key_id }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret }}
           AWS_DEFAULT_REGION: ${{ inputs.aws_region }}
+  changelog:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: bumpversion
         if: endsWith(github.ref, '/main')
         uses: jasonamyers/github-bumpversion-action@v1.0.5
