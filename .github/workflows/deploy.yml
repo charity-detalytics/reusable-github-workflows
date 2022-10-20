@@ -24,6 +24,8 @@ on:
         required: false
       env_base64:
         required: false
+      pipy_registry_auth:
+        required: false
 
 jobs:
   deploy:
