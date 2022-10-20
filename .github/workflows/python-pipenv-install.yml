@@ -118,6 +118,7 @@ jobs:
 
   test:
     needs: build
+    if: endsWith(github.ref, '/main') && inputs.deploy_script
     runs-on: ubuntu-latest
     env:
       env_base64: ${{ secrets.env_base64 }}
@@ -146,7 +147,6 @@ jobs:
         if: inputs.test_script
         run: ${{ inputs.test_script }}
       - name: deploy
-        if: endsWith(github.ref, '/main') && inputs.deploy_script
         run: ${{ inputs.deploy_script }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.aws_key_id }}
@@ -154,6 +154,7 @@ jobs:
           AWS_DEFAULT_REGION: ${{ inputs.aws_region }}
   changelog:
     needs: test
+    if: endsWith(github.ref, '/main')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
