@@ -24,6 +24,7 @@ on:
         required: false
       env_base64:
         required: false
+
 jobs:
   deploy:
     name: Pass input and secrets to my-action
@@ -38,27 +39,24 @@ jobs:
         if: ${{ env.env_base64 != '' }}
         run: echo ${{ env.env_base64 }} | base64 -d > .env
       - uses: actions/setup-python@v4
+        id: setup-python
         with:
+          cache: "pipenv"
           python-version: ${{ inputs.python_version }}
+          check-latest: true
       - name: install pipenv
-        run: pip3 install pipenv
-      - name: Cache pipenv packages
-        id: cache-pipenv
-        uses: actions/cache@v3
-        with:
-          path: ~/.local/share/virtualenvs
-          key: ${{ env.pythonLocation }}-${{ runner.os }}-build-${{ hashFiles('**/Pipfile.lock') }}
+        run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: |
           echo Hello, world!
           echo github ref: ${{ github.ref }}
-          echo pipenv-cache hit: ${{ steps.cache-pipenv.outputs.cache-hit }}
+          echo pipenv-cache hit: ${{ steps.setup-python.outputs.cache-hit }}
       - name: install package
         run: pipenv sync
         env:
           REGISTRY_AUTH: ${{ secrets.pipy_registry_auth }}
-        if: ${{ steps.cache-pipenv.outputs.cache-hit }} == false
+        if: ${{ steps.setup-python.outputs.cache-hit }} == false
       - name: deploy
         if: endsWith(github.ref, '/main') && inputs.deploy_script
         run: ${{ inputs.deploy_script }}

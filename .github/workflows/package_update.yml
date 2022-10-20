@@ -31,7 +31,11 @@ jobs:
         run: echo ${{ env.env_base64 }} | base64 -d > .env
       - uses: actions/setup-python@v4
         with:
+          cache: "pipenv"
           python-version: ${{ inputs.python_version }}
+          check-latest: true
+      - name: install pipenv
+        run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
       - name: Pull pre-commit config
         run: |
           curl -O https://raw.githubusercontent.com/wangsha/reusable-github-workflows/main/.pre-commit-config.yaml
@@ -39,8 +43,6 @@ jobs:
       - uses: wangsha/pre-commit-github-action@main
         with:
           extra_args: --all-files
-      - name: install pipenv
-        run: pip3 install pipenv
       - name: install package
         run: |
           rm -f Pipfile.lock
