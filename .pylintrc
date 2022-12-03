@@ -77,7 +77,12 @@ disable=
     logging-not-lazy,
     abstract-class-instantiated,
     bad-option-value,
-    logging-fstring-interpolation
+    logging-fstring-interpolation,
+    too-many-ancestors,
+    consider-using-f-string,
+    use-dict-literal,
+    unspecified-encoding,
+    no-name-in-module
 
 [REPORTS]
 
