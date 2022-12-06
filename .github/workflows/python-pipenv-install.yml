@@ -166,6 +166,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: minor
+      - name: Push new version tag
+        if: endsWith(github.ref, '/main')
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tags: true
       - name: Release pypi on main branch
         if: endsWith(github.ref, '/main') && inputs.pypi_release
         uses: wangsha/action-s3pypi@main
