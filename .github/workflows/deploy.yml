@@ -60,7 +60,6 @@ jobs:
           REGISTRY_AUTH: ${{ secrets.pipy_registry_auth }}
         if: ${{ steps.setup-python.outputs.cache-hit }} == false
       - name: deploy
-        if: endsWith(github.ref, '/main') && inputs.deploy_script
         run: ${{ inputs.deploy_script }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.aws_key_id }}
